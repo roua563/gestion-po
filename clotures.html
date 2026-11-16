@@ -1,0 +1,824 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Historique des PO clôturés</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 20px;
+}
+
+h1 {
+    color: #1f4e78;
+}
+
+.retour {
+    background: #1f4e78;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.dashboard {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+}
+
+.card h2 {
+    font-size: 30px;
+}
+
+.filtres {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filtres input,
+.filtres select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-width: 160px;
+    flex: 1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th {
+    background: #1f4e78;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.temps {
+    color: green;
+    font-weight: bold;
+}
+
+.retard {
+    color: red;
+    font-weight: bold;
+}
+
+.manquant {
+    color: #d97706;
+    font-weight: bold;
+}
+
+#aucunResultat {
+    display: none;
+    background: white;
+    padding: 20px;
+    text-align: center;
+    color: #777;
+}
+
+@media(max-width:700px) {
+
+    table {
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 7px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<button class="retour"
+onclick="window.location.href='index.html'">
+← Retour Accueil
+</button>
+
+<h1>HISTORIQUE DES PO CLÔTURÉS</h1>
+
+
+<!-- DASHBOARD -->
+
+<div class="dashboard">
+
+    <div class="card">
+        <h3>PO Clôturés</h3>
+        <h2 id="nbClotures">0</h2>
+    </div>
+
+    <div class="card">
+        <h3>PO À Temps</h3>
+        <h2 id="nbTemps">0</h2>
+    </div>
+
+    <div class="card">
+        <h3>PO En Retard</h3>
+        <h2 id="nbRetard">0</h2>
+    </div>
+
+    <div class="card">
+        <h3>OTD Général</h3>
+        <h2 id="otdGeneral">0%</h2>
+    </div>
+
+</div>
+
+
+<!-- FILTRES -->
+
+<div class="filtres">
+
+    <input
+        type="text"
+        id="recherchePO"
+        placeholder="Rechercher un PO..."
+    >
+
+    <select id="filtrePO">
+        <option value="">Tous les PO clôturés</option>
+    </select>
+
+    <select id="filtreModele">
+        <option value="">Tous les modèles</option>
+    </select>
+
+    <select id="filtreMois">
+        <option value="">Tous les mois</option>
+        <option value="01">Janvier</option>
+        <option value="02">Février</option>
+        <option value="03">Mars</option>
+        <option value="04">Avril</option>
+        <option value="05">Mai</option>
+        <option value="06">Juin</option>
+        <option value="07">Juillet</option>
+        <option value="08">Août</option>
+        <option value="09">Septembre</option>
+        <option value="10">Octobre</option>
+        <option value="11">Novembre</option>
+        <option value="12">Décembre</option>
+    </select>
+
+    <select id="filtreAnnee">
+        <option value="">Toutes les années</option>
+    </select>
+
+</div>
+
+
+<!-- TABLEAU -->
+
+<div style="overflow-x:auto;">
+
+<table>
+
+<thead>
+<tr>
+    <th>PO</th>
+    <th>Client</th>
+    <th>Modèle</th>
+    <th>Référence modèle</th>
+    <th>Quantité</th>
+    <th>Type</th>
+    <th>Shipment Sample demandé</th>
+    <th>Exploitabilité prévue</th>
+    <th>Date BL lavage</th>
+    <th>Date Livraison</th>
+    
+</tr>
+</thead>
+
+<tbody id="tableClotures"></tbody>
+
+</table>
+
+</div>
+
+<div id="aucunResultat">
+    Aucun PO clôturé ne correspond à votre recherche.
+</div>
+
+
+<script>
+
+// ======================================
+// RECUPERATION DES DONNEES
+// ======================================
+
+function chargerListePO() {
+
+    try {
+
+        const donnees = JSON.parse(
+            localStorage.getItem("listePO")
+        );
+
+        return Array.isArray(donnees) ? donnees : [];
+
+    } catch(error) {
+
+        console.error("Erreur de lecture :", error);
+
+        return [];
+
+    }
+
+}
+
+let listePO = chargerListePO();
+
+const zone = document.getElementById("tableClotures");
+
+
+// ======================================
+// NORMALISATION DES STATUTS
+// ======================================
+
+function normaliserStatut(valeur) {
+
+    return String(valeur || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+
+}
+
+
+// ======================================
+// VERIFICATION PO CLOTURE
+// ======================================
+
+function estCloture(po) {
+
+    const statut = normaliserStatut(po.statut);
+
+    return statut.includes("clotur");
+
+}
+
+
+// ======================================
+// GESTION DES DATES
+// ======================================
+
+function obtenirDateValeur(valeur) {
+
+    if(!valeur) return null;
+
+    if(typeof valeur === "string") {
+
+        // Format YYYY-MM-DD
+
+        const resultat = valeur.match(
+            /^(\d{4})-(\d{2})-(\d{2})$/
+        );
+
+        if(resultat) {
+
+            return new Date(
+                Number(resultat[1]),
+                Number(resultat[2]) - 1,
+                Number(resultat[3])
+            );
+
+        }
+
+        // Format JJ/MM/AAAA
+
+        const fr = valeur.match(
+            /^(\d{2})\/(\d{2})\/(\d{4})$/
+        );
+
+        if(fr) {
+
+            return new Date(
+                Number(fr[3]),
+                Number(fr[2]) - 1,
+                Number(fr[1])
+            );
+
+        }
+
+    }
+
+    const date = new Date(valeur);
+
+    return isNaN(date.getTime()) ? null : date;
+
+}
+
+
+// ======================================
+// DATE PREVUE
+// ======================================
+
+function datePrevue(po) {
+
+    return obtenirDateValeur(
+
+        po.datePrevueLivraison ||
+        po.dateLivraisonPrevue ||
+        po.datePrevue ||
+        ""
+
+    );
+
+}
+
+
+// ======================================
+// DATE REELLE
+// ======================================
+
+function dateReelle(po) {
+
+    return obtenirDateValeur(
+        po.dateLivraisonReelle ||
+        po.dateCloture ||
+        po.dateLivraison ||
+        ""
+    );
+
+}
+
+
+// ======================================
+// CALCUL DU STATUT OTD
+// ======================================
+
+
+function calculerOTD(po) {
+
+    const statutEnregistre = normaliserStatut(
+        po.resultatOTD || ""
+    );
+
+    // Priorité au résultat enregistré à la clôture
+    if (statutEnregistre.includes("retard")) {
+        return "En retard";
+    }
+
+    if (statutEnregistre.includes("temps")) {
+        return "À temps";
+    }
+
+    return "Date manquante";
+}
+
+
+
+// ======================================
+// AFFICHAGE HISTORIQUE
+// ======================================
+
+function afficherPO() {
+
+    zone.innerHTML = "";
+
+    let nb = 0;
+    let temps = 0;
+    let retard = 0;
+
+    // UNE SEULE BOUCLE
+
+    listePO.forEach(po => {
+
+        // Vérifier si le PO est clôturé
+
+        if(!estCloture(po)) return;
+
+        // Chaque PO clôturé compte pour 1
+
+        nb++;
+
+        const statutOTD = calculerOTD(po);
+
+        // Comptage à temps
+
+        if(statutOTD === "À temps") {
+
+            temps++;
+
+        }
+
+        // Comptage en retard
+
+        else if(statutOTD === "En retard") {
+
+            retard++;
+
+        }
+
+        // Date affichée
+
+        const date = dateReelle(po);
+
+        const dateAffichee = date
+            ? date.toLocaleDateString("fr-FR")
+            : "Non renseignée";
+
+        const mois = date
+            ? String(date.getMonth() + 1).padStart(2, "0")
+            : "";
+
+        const annee = date
+            ? String(date.getFullYear())
+            : "";
+
+        // Couleur du statut
+
+        let classe = "manquant";
+
+        if(statutOTD === "À temps") {
+
+            classe = "temps";
+
+        }
+
+        else if(statutOTD === "En retard") {
+
+            classe = "retard";
+
+        }
+
+       // ======================================
+// CREATION LIGNE TABLEAU
+// ======================================
+
+const ligne = document.createElement("tr");
+
+ligne.dataset.po = String(po.po || "").toLowerCase();
+ligne.dataset.modele = String(po.modele || "").toLowerCase();
+ligne.dataset.mois = mois;
+ligne.dataset.annee = annee;
+
+// PO cliquable
+const cellulePO = document.createElement("td");
+
+const lien = document.createElement("a");
+
+lien.href = `details-po.html?po=${encodeURIComponent(po.po || "")}`;
+
+lien.textContent = po.po || "";
+
+lien.style.color = "#1f4e78";
+lien.style.fontWeight = "bold";
+
+cellulePO.appendChild(lien);
+ligne.appendChild(cellulePO);
+
+// Toutes les informations du PO
+const autresValeurs = [
+
+    po.client || "",
+    po.modele || "",
+    po.referenceModele || po.reference || "",
+    po.qte || po.quantite || "",
+    po.type || "",
+    po.shipmentSample || po.shipmentSampleDemande || "",
+    po.exploitabilitePrevue || "",
+    po.dateBLLavage || "",
+    po.dateLivraisonReelle || po.dateLivraison || "",
+    
+
+];
+
+autresValeurs.forEach(valeur => {
+
+    const cellule = document.createElement("td");
+
+    cellule.textContent = valeur;
+
+    ligne.appendChild(cellule);
+
+});
+
+zone.appendChild(ligne);
+
+    });
+
+
+    // ======================================
+    // DASHBOARD
+    // ======================================
+
+    document.getElementById("nbClotures")
+        .textContent = nb;
+
+    document.getElementById("nbTemps")
+        .textContent = temps;
+
+    document.getElementById("nbRetard")
+        .textContent = retard;
+
+
+    // ======================================
+    // CALCUL OTD GENERAL
+    // ======================================
+
+    const totalOTD = temps + retard;
+
+const otd = totalOTD > 0
+    ? (temps / totalOTD) * 100
+    : 0;
+
+    document.getElementById("otdGeneral")
+        .textContent = Math.round(otd) + "%";
+
+
+    // ======================================
+    // ACTUALISER LES FILTRES
+    // ======================================
+
+    remplirFiltres();
+
+    filtrerTableau();
+
+
+    // DIAGNOSTIC
+
+    console.log("Résultat historique PO :", {
+
+        totalClotures: nb,
+
+        aTemps: temps,
+
+        enRetard: retard,
+
+        dateManquante: nb - temps - retard,
+
+        otd: Math.round(otd) + "%"
+
+    });
+
+}
+
+
+// ======================================
+// REMPLIR LES LISTES
+// ======================================
+
+function remplirFiltres() {
+
+    const filtrePO =
+        document.getElementById("filtrePO");
+
+    const filtreModele =
+        document.getElementById("filtreModele");
+
+    const filtreAnnee =
+        document.getElementById("filtreAnnee");
+
+    const ancienPO = filtrePO.value;
+
+    const ancienModele = filtreModele.value;
+
+    const ancienneAnnee = filtreAnnee.value;
+
+    filtrePO.innerHTML =
+        '<option value="">Tous les PO clôturés</option>';
+
+    filtreModele.innerHTML =
+        '<option value="">Tous les modèles</option>';
+
+    filtreAnnee.innerHTML =
+        '<option value="">Toutes les années</option>';
+
+
+    const clotures = listePO.filter(estCloture);
+
+
+    const pos = [...new Set(
+
+        clotures
+            .map(po => po.po)
+            .filter(Boolean)
+
+    )];
+
+
+    const modeles = [...new Set(
+
+        clotures
+            .map(po => po.modele)
+            .filter(Boolean)
+
+    )];
+
+
+    const annees = [...new Set(
+
+        clotures.map(po => {
+
+            const date = dateReelle(po);
+
+            return date
+                ? String(date.getFullYear())
+                : null;
+
+        }).filter(Boolean)
+
+    )];
+
+
+    pos.sort().forEach(po => {
+
+        filtrePO.add(new Option(po, po));
+
+    });
+
+
+    modeles.sort().forEach(modele => {
+
+        filtreModele.add(new Option(modele, modele));
+
+    });
+
+
+    annees.sort().forEach(annee => {
+
+        filtreAnnee.add(new Option(annee, annee));
+
+    });
+
+
+    filtrePO.value = ancienPO;
+
+    filtreModele.value = ancienModele;
+
+    filtreAnnee.value = ancienneAnnee;
+
+}
+
+
+// ======================================
+// FILTRAGE DU TABLEAU
+// ======================================
+
+function filtrerTableau() {
+
+    const recherche = document
+        .getElementById("recherchePO")
+        .value.toLowerCase().trim();
+
+
+    const poChoisi = document
+        .getElementById("filtrePO")
+        .value.toLowerCase();
+
+
+    const modeleChoisi = document
+        .getElementById("filtreModele")
+        .value.toLowerCase();
+
+
+    const moisChoisi = document
+        .getElementById("filtreMois")
+        .value;
+
+
+    const anneeChoisie = document
+        .getElementById("filtreAnnee")
+        .value;
+
+
+    const lignes = zone.querySelectorAll("tr");
+
+    let resultats = 0;
+
+
+    lignes.forEach(ligne => {
+
+        const po = ligne.dataset.po;
+
+        const modele = ligne.dataset.modele;
+
+        const mois = ligne.dataset.mois;
+
+        const annee = ligne.dataset.annee;
+
+
+        const okRecherche = po.includes(recherche);
+
+        const okPO =
+            !poChoisi || po === poChoisi;
+
+        const okModele =
+            !modeleChoisi || modele === modeleChoisi;
+
+        const okMois =
+            !moisChoisi || mois === moisChoisi;
+
+        const okAnnee =
+            !anneeChoisie || annee === anneeChoisie;
+
+
+        const afficher =
+            okRecherche &&
+            okPO &&
+            okModele &&
+            okMois &&
+            okAnnee;
+
+
+        ligne.style.display = afficher ? "" : "none";
+
+
+        if(afficher) {
+
+            resultats++;
+
+        }
+
+    });
+
+
+    document.getElementById("aucunResultat").style.display =
+        resultats === 0 ? "block" : "none";
+
+}
+
+
+// ======================================
+// EVENEMENTS DES FILTRES
+// ======================================
+
+document.getElementById("recherchePO")
+    .addEventListener("input", filtrerTableau);
+
+document.getElementById("filtrePO")
+    .addEventListener("change", filtrerTableau);
+
+document.getElementById("filtreModele")
+    .addEventListener("change", filtrerTableau);
+
+document.getElementById("filtreMois")
+    .addEventListener("change", filtrerTableau);
+
+document.getElementById("filtreAnnee")
+    .addEventListener("change", filtrerTableau);
+
+
+// ======================================
+// ACTUALISATION DEPUIS UNE AUTRE PAGE
+// ======================================
+
+window.addEventListener("storage", function(event) {
+
+    if(event.key === "listePO") {
+
+        listePO = chargerListePO();
+
+        afficherPO();
+
+    }
+
+});
+
+
+// ======================================
+// INITIALISATION
+// ======================================
+
+afficherPO();
+
+</script>
+
+</body>

@@ -1,0 +1,988 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>SUIVI PRODUCTION LAVAGE HITEX</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>SUIVI PRODUCTION LAVAGE HITEX</h1>
+
+<div class="main-layout">
+
+    <!-- PARTIE GAUCHE -->
+
+    <div class="content-left">
+
+        <!-- PO OUVERTS -->
+
+        <div class="section">
+            <h2>PO OUVERTS</h2>
+            <div id="poList"></div>
+        </div>
+
+        <!-- DETAIL PO -->
+
+        <div class="section">
+
+            <h2>DÉTAIL DU PO SÉLECTIONNÉ</h2>
+
+            <h3 id="poSelectionne">Aucun PO sélectionné</h3>
+
+            <p><strong>Client :</strong> <span id="clientAff"></span></p>
+            <p><strong>Modèle :</strong> <span id="modeleAff"></span></p>
+            <p><strong>Quantité coupée :</strong> <span id="qteAff"></span></p>
+
+        </div>
+
+        <!-- CARTES DE SUIVI -->
+
+        <div class="cards">
+
+            <div class="card labo">
+                <h2>TEST LABO</h2>
+                <div id="stageLabo">Sélectionnez un PO.</div>
+            </div>
+
+            <div class="card machine">
+                <h2>MACHINE TEST</h2>
+                <div id="stageMachine">Sélectionnez un PO.</div>
+            </div>
+
+            <div class="card production">
+                <h2>PRODUCTION</h2>
+                <div id="stageProduction">Sélectionnez un PO.</div>
+            </div>
+
+        </div>
+
+        <br>
+
+        <!-- OTD GENERAL -->
+
+        <div class="otd otd-attente">
+
+            <h2>STATUT DE LA COMMANDE</h2>
+            <h1 id="otdGlobal">EN ATTENTE</h1>
+
+        </div>
+
+        <!-- STATISTIQUES -->
+
+        <div class="section">
+
+            <div class="stats">
+
+                <div>
+                    <h3>PO Ouverts</h3>
+                    <p id="nbOuvert">0</p>
+                </div>
+
+                <div>
+                    <h3>PO En Retard</h3>
+                    <p id="nbRetard">0</p>
+                </div>
+
+                <div class="cloture-box"
+                     onclick="window.location.href='clotures.html'">
+
+                     <h3>PO Clôturés</h3>
+
+                     <p id="nbCloture">0</p>
+
+                    <small>Cliquer pour consulter</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- PARTIE DROITE -->
+
+    <div class="sidebar-right">
+
+        <div class="section add-order">
+
+            <h2>AJOUTER UNE COMMANDE</h2>
+
+            <label>PO</label>
+            <input type="text" id="po" placeholder="Numéro PO">
+
+            <label>Client</label>
+
+<select id="client">
+    <option value="">▼ Sélectionner un client</option>
+    <option value="SIMONS">SIMONS</option>
+    <option value="MONNALISA S.P.A">MONNALISA S.P.A</option>
+    <option value="SAINT JAMES">SAINT JAMES</option>
+    <option value="MUSTANG">MUSTANG</option>
+    <option value="BIG STAR">BIG STAR</option>
+    <option value="Marlboro Classics">Marlboro Classics</option>
+    <option value="BALZAC PARIS">BALZAC PARIS</option>
+    <option value="CALA">CALA</option>
+    <option value="JP1880 ( POPKEN FASHION)">JP1880 ( POPKEN FASHION)</option>
+    <option value="Red Legend">Red Legend</option>
+    <option value="LABOUREUR">LABOUREUR</option>
+    <option value="LABOUREUR TAF">LABOUREUR TAF</option>
+    <option value="IKKS">IKKS</option>
+    <option value="IKKS TAF">IKKS TAF</option>
+    <option value="AUBIN & WILLS">AUBIN & WILLS</option>
+    <option value="HAN Kjøbenhavn">HAN Kjøbenhavn</option>
+    <option value="SAAJ">SAAJ</option>
+    <option value="Maloé">Maloé</option>
+    <option value="LONGCHAMP TAF">LONGCHAMP TAF</option>
+    <option value="PETITE MENDIGOTE">PETITE MENDIGOTE</option>
+</select>
+
+            <label>Modèle</label>
+            <input type="text" id="modele" placeholder="Référence modèle">
+
+            <label>Quantité coupée</label>
+            <input type="number" id="qte" min="1" placeholder="Quantité coupée">
+           <label>Type</label>
+
+<select id="type">
+    <option value="">▼ Sélectionner un type</option>
+    <option value="Bermuda">Bermuda</option>
+    <option value="Blouson">Blouson</option>
+    <option value="Chapeau">Chapeau</option>
+    <option value="Chemise">Chemise</option>
+    <option value="Combinaison">Combinaison</option>
+    <option value="ECHARPE">ECHARPE</option>
+    <option value="Gilet">Gilet</option>
+    <option value="Jacket">Jacket</option>
+    <option value="Jupe">Jupe</option>
+    <option value="Pant à Court">Pant à Court</option>
+    <option value="Pantalon">Pantalon</option>
+    <option value="Robe">Robe</option>
+    <option value="Sac">Sac</option>
+    <option value="Salopette">Salopette</option>
+    <option value="Short">Short</option>
+</select>
+
+<label>Lavage</label>
+
+<select id="lavage">
+    <option value="">▼ Sélectionner un lavage</option>
+    <option value="BRUT">BRUT</option>
+    <option value="RINSE">RINSE</option>
+    <option value="Light wash">Light wash</option>
+    <option value="Stone Wash">Stone Wash</option>
+    <option value="STONE BLEACH">STONE BLEACH</option>
+    <option value="Medium wash">Medium wash</option>
+    <option value="Bleach">Bleach</option>
+    <option value="lavage avec boules">lavage avec boules</option>
+    <option value="Black Vein wash">Black Vein wash</option>
+    <option value="Dirty blue">Dirty blue</option>
+    <option value="MID USED">MID USED</option>
+    <option value="BLUE WORN">BLUE WORN</option>
+    <option value="BLEU INDIGO">BLEU INDIGO</option>
+    <option value="Bleu outremer">Bleu outremer</option>
+    <option value="MARINE">MARINE</option>
+    <option value="BLANC">BLANC</option>
+    <option value="BEIGE">BEIGE</option>
+    <option value="ECRU">ECRU</option>
+</select>
+
+<label>Quantité Shipment Sample demandé</label>
+<input type="number" id="shipmentSample">
+
+<label>Exploitabilité prévue</label>
+<input type="date" id="exploitabilitePrevue">
+
+<label>Date BL lavage</label>
+<input type="date" id="dateBLLavage">
+
+
+
+
+            <button class="add-btn" onclick="ajouterPO()">
+                Ajouter le PO
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+let listePO =
+JSON.parse(localStorage.getItem("listePO")) || [];
+
+let poSelectionneIndex = null;
+function sauvegarderDonnees() {
+
+    localStorage.setItem(
+        "listePO",
+        JSON.stringify(listePO)
+    );
+
+}
+
+const etapes = {
+    labo: {
+        id: "stageLabo",
+        nom: "TEST LABO"
+    },
+    machine: {
+        id: "stageMachine",
+        nom: "MACHINE TEST"
+    },
+    production: {
+        id: "stageProduction",
+        nom: "PRODUCTION"
+    }
+};
+
+// INITIALISER UNE ETAPE
+
+function creerEtape() {
+
+    return [{
+        forecastDate: "",
+        situation: "En cours",
+        readyAt: null,
+        validationResponsible: "",
+        result: "",
+        validatedAt: null
+    }];
+
+}
+
+// INITIALISER LE SUIVI DU PO
+
+function initialiserSuivi() {
+
+    return {
+        labo: creerEtape(),
+        machine: creerEtape(),
+        production: creerEtape()
+    };
+
+}
+
+// AJOUTER UNE COMMANDE
+
+      
+function ajouterPO() {
+
+    const po = document.getElementById("po").value.trim();
+    const client = document.getElementById("client").value.trim();
+    const modele = document.getElementById("modele").value.trim();
+    const qte = document.getElementById("qte").value;
+
+    const type = document.getElementById("type").value;
+    const lavage = document.getElementById("lavage").value;
+
+    const shipmentSample =
+        document.getElementById("shipmentSample").value;
+
+    const exploitabilitePrevue =
+        document.getElementById("exploitabilitePrevue").value;
+
+    const dateBLLavage =
+        document.getElementById("dateBLLavage").value;
+
+    const dateLivraison = "";
+
+    if (
+        !po ||
+        !client ||
+        !modele ||
+        !qte ||
+        !lavage ||
+        Number(qte) <= 0
+    ) {
+        alert("Veuillez remplir correctement tous les champs !");
+        return;
+    }
+
+    if (listePO.some(item =>
+        item.po.toLowerCase() === po.toLowerCase()
+    )) {
+        alert("Ce PO existe déjà !");
+        return;
+    }
+
+    listePO.push({
+
+        po,
+        client,
+        modele,
+        qte,
+        type,
+        lavage,
+        shipmentSample,
+
+        exploitabilitePrevue,
+        exploitabiliteReelle: "",
+        dateBLLavage,
+        leadTime: "",
+        dateLivraison,
+        otdGlobal: "",
+
+        statut: "Ouvert",
+        resultatOTD: "",
+
+        dateCreation: new Date().toISOString(),
+
+        suivi: initialiserSuivi()
+
+    });
+
+    sauvegarderDonnees();
+
+    afficherPO();
+
+    selectionnerPO(listePO.length - 1);
+
+    document.getElementById("po").value = "";
+    document.getElementById("client").value = "";
+    document.getElementById("modele").value = "";
+    document.getElementById("qte").value = "";
+    document.getElementById("type").value = "";
+    document.getElementById("lavage").value = "";
+    document.getElementById("shipmentSample").value = "";
+    document.getElementById("exploitabilitePrevue").value = "";
+    document.getElementById("dateBLLavage").value = "";
+
+}
+
+// AFFICHER LES PO
+
+function afficherPO() {
+
+    const zone = document.getElementById("poList");
+    zone.innerHTML = "";
+
+    listePO.forEach((item, index) => {
+
+    if(item.statut && item.statut === "Clôturé"){
+    return;
+    }
+
+
+        const btn = document.createElement("button");
+
+        btn.className = "po-btn";
+        btn.textContent = item.po;
+
+        if (index === poSelectionneIndex) {
+            btn.classList.add("selected-po");
+        }
+
+        btn.onclick = () => selectionnerPO(index);
+
+        zone.appendChild(btn);
+
+    });
+
+    actualiserStatistiques();
+
+}
+
+// SELECTIONNER UN PO
+
+
+function selectionnerPO(index) {
+
+    if (!listePO[index]) return;
+
+    poSelectionneIndex = index;
+
+    const item = listePO[index];
+
+    if (!item.suivi) {
+        item.suivi = initialiserSuivi();
+    }
+
+    ["labo", "machine", "production"].forEach(key => {
+
+        if (!Array.isArray(item.suivi[key]) ||
+            item.suivi[key].length === 0) {
+
+            item.suivi[key] = creerEtape();
+
+        }
+
+    });
+
+    sauvegarderDonnees();
+
+    document.getElementById("poSelectionne").innerText = item.po;
+    document.getElementById("clientAff").innerText = item.client;
+    document.getElementById("modeleAff").innerText = item.modele;
+    document.getElementById("qteAff").innerText = item.qte;
+
+        afficherPO();
+    afficherToutesLesEtapes();
+    actualiserOTDGeneral();
+
+}
+
+
+// AFFICHER LES ETAPES
+
+function afficherToutesLesEtapes() {
+
+    if (poSelectionneIndex === null) return;
+
+    Object.keys(etapes).forEach(key => afficherEtape(key));
+
+}
+
+// MODIFIER UNE PREVISION
+
+function modifierPrevision(key, index, valeur) {
+
+    const item = listePO[poSelectionneIndex].suivi[key][index];
+
+    if (item.readyAt || item.result) return;
+
+    item.forecastDate = valeur;
+
+    sauvegarderDonnees();
+
+}
+
+// CHANGER LA SITUATION
+
+function changerSituation(key, index, valeur) {
+
+    const item = listePO[poSelectionneIndex].suivi[key][index];
+
+    if (item.result) return;
+
+    if (valeur === "Prêt") {
+
+        if (!item.forecastDate) {
+            alert("Veuillez saisir la date prévisionnelle !");
+            afficherEtape(key);
+            return;
+        }
+
+        if (!item.readyAt) {
+            item.readyAt = new Date().toISOString();
+        }
+
+        item.situation = "Prêt";
+
+    } else {
+
+        item.situation = "En cours";
+        item.readyAt = null;
+
+    }
+
+    sauvegarderDonnees();
+
+    afficherEtape(key);
+
+    actualiserOTDGeneral();
+
+}
+// ENREGISTRER LA VALIDATION
+
+function validerTest(key, index) {
+
+    const item = listePO[poSelectionneIndex].suivi[key][index];
+
+    if (item.result) return;
+
+    if (!item.readyAt) {
+        alert("Le test doit d'abord être déclaré prêt !");
+        return;
+    }
+
+    const responsable = document.getElementById(
+        `responsable-${key}-${index}`
+    ).value;
+
+    const resultat = document.getElementById(
+        `resultat-${key}-${index}`
+    ).value;
+
+    if (!responsable || !resultat) {
+        alert("Choisissez le responsable et le résultat !");
+        return;
+    }
+
+    item.validationResponsible = responsable;
+    item.result = resultat;
+
+    if (resultat === "Validé") {
+
+        item.validatedAt = new Date().toISOString();
+
+    } else {
+
+        listePO[poSelectionneIndex].suivi[key].push({
+
+            forecastDate: "",
+            situation: "En cours",
+            readyAt: null,
+            validationResponsible: "",
+            result: "",
+            validatedAt: null
+
+        });
+
+    }
+
+    sauvegarderDonnees();
+
+verifierCloture(poSelectionneIndex);
+
+afficherEtape(key);
+actualiserOTDGeneral();
+actualiserStatistiques();
+afficherPO();
+
+}
+
+// CALCUL OTD PAR ETAPE
+
+function calculerOTD(key) {
+
+    const suivi = listePO[poSelectionneIndex].suivi?.[key] || [];
+
+    const premierePrevision = suivi[0].forecastDate;
+
+    const testFinal = suivi.find(
+        item => item.result === "Validé"
+    );
+
+    if (!premierePrevision || !testFinal) return null;
+
+    const dateValidation = new Date(testFinal.validatedAt);
+
+    const datePrevue = new Date(
+        premierePrevision + "T00:00:00"
+    );
+
+    const jourValidation = Date.UTC(
+        dateValidation.getFullYear(),
+        dateValidation.getMonth(),
+        dateValidation.getDate()
+    );
+
+    const jourPrevu = Date.UTC(
+        datePrevue.getFullYear(),
+        datePrevue.getMonth(),
+        datePrevue.getDate()
+    );
+
+    const joursRetard = Math.max(
+        0,
+        Math.round((jourValidation - jourPrevu) / 86400000)
+    );
+
+    return {
+        resultat: joursRetard === 0 ? "A TEMPS" : "RETARD",
+        joursRetard: joursRetard
+    };
+
+}
+
+// FORMAT DATE ET HEURE
+
+function formaterDateHeure(date) {
+
+    return new Date(date).toLocaleString("fr-FR");
+
+}
+
+// SECURISER LE TEXTE HTML
+
+function echapperHTML(valeur) {
+
+    return String(valeur).replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[caractere]);
+
+}
+
+// AFFICHER UNE ETAPE
+
+function afficherEtape(key) {
+
+    if (poSelectionneIndex === null) return;
+
+    const zone = document.getElementById(etapes[key].id);
+    const suivi = listePO[poSelectionneIndex].suivi[key];
+
+    zone.innerHTML = "";
+
+    suivi.forEach((item, index) => {
+
+        const numero = index + 1;
+        const verrouille = !!item.result;
+        const dateVerrouillee = !!item.readyAt || verrouille;
+
+        let html = `
+
+        <div class="stage-attempt ${item.situation === "Prêt" ? "etape-prete" : ""}">
+
+            <h3>PRÉVISION ${numero}</h3>
+
+            <label>Date prévisionnelle</label>
+
+            <input type="date"
+                value="${item.forecastDate}"
+                ${dateVerrouillee ? "disabled" : ""}
+                onchange="modifierPrevision('${key}',${index},this.value)">
+
+            <label>Situation</label>
+
+<select
+    class="${item.situation === "Prêt" ? "situation-prete" : "situation-encours"}"
+    ${verrouille ? "disabled" : ""}
+    onchange="changerSituation('${key}',${index},this.value)">
+
+                <option value="En cours"
+                    ${item.situation === "En cours" ? "selected" : ""}>
+                    En cours
+                </option>
+
+                <option value="Prêt"
+                    ${item.situation === "Prêt" ? "selected" : ""}>
+                    Prêt
+                </option>
+
+            </select>
+
+        `;
+
+        if (item.readyAt) {
+
+            html += `
+
+            <div class="ready-info">
+
+                <strong>TEST PRÊT LE :</strong><br>
+                ${formaterDateHeure(item.readyAt)}
+
+            </div>
+
+            <div class="validation-info">
+
+                <strong>VALIDATION DU TEST</strong>
+
+                <label>Responsable validation</label>
+
+                <select
+                    id="responsable-${key}-${index}"
+                    ${verrouille ? "disabled" : ""}>
+
+                    <option value="">Choisir responsable</option>
+
+                    <option value="Ramzi"
+                        ${item.validationResponsible === "Ramzi" ? "selected" : ""}>
+                        Ramzi
+                    </option>
+
+                    <option value="Jihed"
+                        ${item.validationResponsible === "Jihed" ? "selected" : ""}>
+                        Jihed
+                    </option>
+
+                </select>
+
+                <label>Résultat</label>
+
+                <select
+                    id="resultat-${key}-${index}"
+                    ${verrouille ? "disabled" : ""}>
+
+                    <option value="">Choisir résultat</option>
+
+                    <option value="Validé"
+                        ${item.result === "Validé" ? "selected" : ""}>
+                        Validé
+                    </option>
+
+                    <option value="Non validé"
+                        ${item.result === "Non validé" ? "selected" : ""}>
+                        Non validé
+                    </option>
+
+                </select>
+
+                ${!verrouille ? `
+
+                    <button class="validate-btn"
+                        onclick="validerTest('${key}',${index})">
+                        Enregistrer la validation
+                    </button>
+
+                ` : ""}
+
+            </div>
+
+            `;
+
+        }
+
+        if (item.result === "Validé") {
+
+    const otd = calculerOTD(key);
+
+    html += `
+
+    <div class="ready-info">
+
+        <strong>TEST VALIDÉ</strong><br>
+
+        Responsable :
+        ${echapperHTML(item.validationResponsible)}<br>
+
+        Date de validation :
+        ${formaterDateHeure(item.validatedAt)}
+
+    </div>
+
+    <div class="otd-real ${otd.joursRetard === 0 ? "otd-on-time" : "otd-late"}">
+
+        STATUT COMMANDE :
+        ${otd.joursRetard === 0
+            ? "À TEMPS"
+            : "RETARD (" + otd.joursRetard + " JOUR(S))"}
+
+    </div>
+
+    `;
+
+}
+        if (item.result === "Non validé") {
+
+            html += `
+
+            <div class="ready-info">
+
+                <strong>TEST NON VALIDÉ</strong><br>
+
+                Responsable :
+                ${echapperHTML(item.validationResponsible)}
+
+            </div>
+
+            `;
+
+        }
+
+        html += `</div>`;
+
+        zone.insertAdjacentHTML("beforeend", html);
+
+    });
+
+}
+
+// OTD GENERAL DU PO
+
+function actualiserOTDGeneral() {
+
+    if (poSelectionneIndex === null) return;
+
+    const po = listePO[poSelectionneIndex];
+
+    let retardTotal = 0;
+    let etapesPretes = 0;
+
+    Object.keys(etapes).forEach(key => {
+
+        const suivi = po.suivi[key];
+
+        const testPret = suivi.find(item => item.readyAt);
+
+        if (!testPret || !suivi[0].forecastDate) {
+            return;
+        }
+
+        etapesPretes++;
+
+        const datePrevue = new Date(
+            suivi[0].forecastDate + "T00:00:00"
+        );
+
+        const datePret = new Date(testPret.readyAt);
+
+        const difference = Math.max(
+            0,
+            Math.round(
+                (
+                    Date.UTC(
+                        datePret.getFullYear(),
+                        datePret.getMonth(),
+                        datePret.getDate()
+                    ) -
+                    Date.UTC(
+                        datePrevue.getFullYear(),
+                        datePrevue.getMonth(),
+                        datePrevue.getDate()
+                    )
+                ) / 86400000
+            )
+        );
+
+        retardTotal += difference;
+
+    });
+
+    const zone = document.getElementById("otdGlobal");
+    const barre = zone.closest(".otd");
+
+    if (etapesPretes === 0) {
+
+        zone.innerText = "EN ATTENTE";
+        barre.className = "otd otd-attente";
+
+    } else if (retardTotal === 0) {
+
+        zone.innerText = "À TEMPS";
+        barre.className = "otd otd-temps";
+
+    } else {
+
+        zone.innerText = "RETARD (" + retardTotal + " JOURS)";
+        barre.className = "otd otd-retard-important";
+
+    }
+}
+
+
+function verifierCloture(index) {
+
+    const po = listePO[index];
+
+    if (!po || po.statut === "Clôturé") return;
+
+    const toutesValidees = ["labo", "machine", "production"].every(key =>
+
+        po.suivi[key].some(item => item.result === "Validé")
+
+    );
+
+    if (!toutesValidees) return;
+
+    const retards = ["labo", "machine", "production"].map(key => {
+
+        const valide = po.suivi[key].find(
+            item => item.result === "Validé"
+        );
+
+        const prevision = po.suivi[key][0].forecastDate;
+
+        if (!prevision || !valide.validatedAt) return 0;
+
+        const datePrevue = new Date(prevision + "T00:00:00");
+        const dateValidation = new Date(valide.validatedAt);
+
+        const difference = Date.UTC(
+            dateValidation.getFullYear(),
+            dateValidation.getMonth(),
+            dateValidation.getDate()
+        ) - Date.UTC(
+            datePrevue.getFullYear(),
+            datePrevue.getMonth(),
+            datePrevue.getDate()
+        );
+
+        return Math.max(0, Math.round(difference / 86400000));
+
+    });
+
+    const retardTotal = retards.reduce(
+        (total, retard) => total + retard, 0
+    );
+
+    po.resultatOTD = retardTotal === 0
+        ? "À TEMPS"
+        : "RETARD (" + retardTotal + " JOURS)";
+
+    po.statut = "Clôturé";
+
+    sauvegarderDonnees();
+
+    poSelectionneIndex = null;
+
+    document.getElementById("poSelectionne").innerText =
+        "Aucun PO sélectionné";
+
+    document.getElementById("clientAff").innerText = "";
+    document.getElementById("modeleAff").innerText = "";
+    document.getElementById("qteAff").innerText = "";
+
+    document.getElementById("stageLabo").innerHTML =
+        "Sélectionnez un PO.";
+
+    document.getElementById("stageMachine").innerHTML =
+        "Sélectionnez un PO.";
+
+    document.getElementById("stageProduction").innerHTML =
+        "Sélectionnez un PO.";
+
+    actualiserOTDGeneral();
+    afficherPO();
+    actualiserStatistiques();
+
+    alert(
+        "Le PO " + po.po +
+        " est clôturé.\nRésultat OTD : " + po.resultatOTD
+    );
+
+}
+
+// STATISTIQUES
+
+
+function actualiserStatistiques() {
+
+    let ouverts = 0;
+    let retard = 0;
+    let clotures = 0;
+
+    listePO.forEach(po => {
+
+        if (po.statut === "Clôturé") {
+            clotures++;
+        } else {
+            ouverts++;
+        }
+
+    });
+
+    document.getElementById("nbOuvert").innerText = ouverts;
+    document.getElementById("nbRetard").innerText = retard;
+    document.getElementById("nbCloture").innerText = clotures;
+
+}
+
+window.onload = function() {
+
+    afficherPO();
+
+}
+
+</script>
+
+</body>
+</html>

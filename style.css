@@ -1,0 +1,361 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #1f4e78;
+}
+
+.section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.save-status {
+    text-align: center;
+    color: #188038;
+    font-size: 13px;
+    margin: 12px;
+}
+
+.main-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 20px;
+    align-items: start;
+}
+
+.content-left {
+    min-width: 0;
+}
+
+.sidebar-right {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+}
+
+.add-order {
+    background: white;
+    border-top: 5px solid #28a745;
+}
+
+.add-order h2 {
+    color: #1f4e78;
+}
+
+.add-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.add-btn:hover {
+    background: #218838;
+}
+
+.po-btn {
+    background: #3266e3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin: 5px;
+}
+
+.po-btn:hover {
+    background: #214bb5;
+}
+
+.selected-po {
+    background: #1f4e78;
+    outline: 2px solid #9bbce0;
+}
+
+.cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.card {
+    flex: 1;
+    min-width: 200px;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.labo {
+    background: #2962ff;
+}
+
+.machine {
+    background: #ef6c00;
+}
+
+.production {
+    background: #188038;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    height: 40px;
+    padding: 8px;
+    border: 1px solid #999;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    background: white;
+    color: #222;
+}
+
+input:disabled, select:disabled {
+    background: #e9e9e9;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.stage-attempt{
+    background: rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.35);
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:15px;
+    color:white;
+}
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:15px;
+    color:#000;
+}
+
+.stage-attempt h3{
+    color:#000;
+    font-size:18px;
+    margin-bottom:15px;
+}
+
+.stage-attempt label {
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.stage-attempt input,
+.stage-attempt select{
+    background:#dcdcdc;
+    border:none;
+    border-radius:5px;
+    color:#555;
+}
+
+.ready-info,
+.validation-info {
+    background: rgba(255,255,255,0.2);
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.validation-info strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.validate-btn {
+    background: white;
+    color: #1f4e78;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    width: 100%;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.validate-btn:hover {
+    background: #e8e8e8;
+}
+
+.otd-real {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.otd-on-time {
+    color: #188038;
+}
+
+.otd-late {
+    color: #d93025;
+}
+
+.otd {
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+    background: #7b2ff7;
+}
+
+.otd h1 {
+    color: white;
+}
+
+.otd.otd-attente {
+    background: #7b2ff7;
+}
+
+.otd.otd-temps {
+    background: #188038;
+}
+
+.otd.otd-retard-leger {
+    background: #ef6c00;
+}
+
+.otd.otd-retard-important {
+    background: #d93025;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.stats p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1f4e78;
+}
+
+.export-btn,
+.import-btn,
+.delete-btn {
+    width: 100%;
+    padding: 11px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 7px;
+    color: white;
+}
+
+.export-btn {
+    background: #1f4e78;
+}
+
+.import-btn {
+    background: #188038;
+}
+
+.delete-btn {
+    background: #d93025;
+}
+
+@media (max-width: 900px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar-right {
+        position: static;
+        grid-row: 1;
+    }
+
+    .cards {
+        flex-direction: column;
+    }
+
+    .card {
+        width: 100%;
+    }
+}
+.cloture-box{
+    background:#7b2ff7;
+    color:white;
+    border-radius:10px;
+    padding:20px;
+    text-align:center;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.cloture-box:hover{
+    background:#6422d8;
+    transform:scale(1.03);
+}
+
+.cloture-box h3{
+    color:white;
+}
+
+.cloture-box p{
+    color:white !important;
+    font-size:28px;
+}
+
+.cloture-box small{
+    color:white;
+}
+function appliquerCouleurSituation(selectElement) {
+
+    if (selectElement.value === "Prêt") {
+        selectElement.style.color = "#16a34a"; // vert
+        selectElement.style.fontWeight = "bold";
+    } else {
+        selectElement.style.color = "#dc2626"; // rouge
+        selectElement.style.fontWeight = "bold";
+    }
+
+}
+<select onchange="appliquerCouleurSituation(this)">
+    <option value="En cours">En cours</option>
+    <option value="Prêt">Prêt</option>
+</select>
+
+const situation = document.createElement("select");
+
+situation.innerHTML = `
+    <option value="En cours">En cours</option>
+    <option value="Prêt">Prêt</option>
+`;
+
+situation.onchange = function () {
+    appliquerCouleurSituation(this);
+};
+
+appliquerCouleurSituation(situation);

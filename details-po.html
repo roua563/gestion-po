@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Détail PO Clôturé</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f5f5;
+    margin:20px;
+}
+
+.retour{
+    background:#1f4e78;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+h1{
+    color:#1f4e78;
+}
+
+.section{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#1f4e78;
+    color:white;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:left;
+}
+
+.info{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:10px;
+}
+
+.carte{
+    background:white;
+    padding:15px;
+    border-radius:8px;
+}
+
+.vert{
+    color:green;
+    font-weight:bold;
+}
+
+.rouge{
+    color:red;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<button class="retour"
+onclick="window.location.href='clotures.html'">
+← Retour Historique
+</button>
+
+<div id="contenu"></div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+const numeroPO = params.get("po");
+
+const listePO =
+JSON.parse(localStorage.getItem("listePO")) || [];
+
+const po = listePO.find(
+item => String(item.po) === String(numeroPO)
+);
+
+const contenu = document.getElementById("contenu");
+
+function calculStatutCommande(prevision, validation){
+
+    if(!prevision || !validation){
+        return "-";
+    }
+
+    const prevue =
+    new Date(prevision + "T00:00:00");
+
+    const valide =
+    new Date(validation);
+
+    const diff =
+    Math.round(
+        (
+            Date.UTC(
+                valide.getFullYear(),
+                valide.getMonth(),
+                valide.getDate()
+            )
+            -
+            Date.UTC(
+                prevue.getFullYear(),
+                prevue.getMonth(),
+                prevue.getDate()
+            )
+        ) / 86400000
+    );
+
+    if(diff <= 0){
+        return "À TEMPS";
+    }
+
+    return "RETARD (" + diff + " JOUR(S))";
+}
+
+function creerTableau(titre,suivi){
+
+    let html = `
+    <div class="section">
+
+    <h2>${titre}</h2>
+
+    <table>
+
+    <tr>
+        <th>Prévision</th>
+        <th>Situation</th>
+        <th>Test prêt le</th>
+        <th>Validation</th>
+        <th>Date validation</th>
+        <th>Responsable</th>
+        <th>Statut commande</th>
+    </tr>
+    `;
+
+    suivi.forEach(item => {
+
+        html += `
+        <tr>
+
+            <td>${item.forecastDate || ""}</td>
+
+            <td>${item.situation || ""}</td>
+
+            <td>
+            ${item.readyAt
+            ? new Date(item.readyAt)
+            .toLocaleString("fr-FR")
+            : ""}
+            </td>
+
+            <td>${item.result || ""}</td>
+
+            <td>
+            ${item.validatedAt
+            ? new Date(item.validatedAt)
+            .toLocaleString("fr-FR")
+            : ""}
+            </td>
+
+            <td>
+            ${item.validationResponsible || ""}
+            </td>
+
+            <td>
+            ${calculStatutCommande(
+    item.forecastDate,
+    item.validatedAt
+)}
+
+        </tr>
+        `;
+
+    });
+
+    html += `
+    </table>
+    </div>
+    `;
+
+    return html;
+}
+
+if(!po){
+
+    contenu.innerHTML =
+    "<h2>PO introuvable</h2>";
+
+}else{
+
+contenu.innerHTML = `
+
+<h1>HISTORIQUE COMPLET DU PO ${po.po}</h1>
+
+<div class="section">
+
+<div class="info">
+
+<div class="carte">
+<b>Client</b><br>
+${po.client}
+</div>
+
+<div class="carte">
+<b>PO</b><br>
+${po.po}
+</div>
+
+<div class="carte">
+<b>Modèle</b><br>
+${po.modele}
+</div>
+
+<div class="carte">
+<b>Quantité</b><br>
+${po.qte}
+</div>
+
+<div class="carte">
+<b>Statut</b><br>
+${po.statut}
+</div>
+
+<div class="carte">
+<b>Statut commande global</b><br>
+${po.resultatOTD || "Non calculé"}
+</div>
+
+</div>
+
+</div>
+
+${creerTableau(
+"TEST LABO",
+po.suivi.labo
+)}
+
+${creerTableau(
+"MACHINE TEST",
+po.suivi.machine
+)}
+
+${creerTableau(
+"PRODUCTION",
+po.suivi.production
+)}
+
+`;
+
+}
+
+</script>
+
+</body>
+</html>
